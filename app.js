@@ -25,6 +25,9 @@ function resetInterface() {
   document.getElementById("sriSnippet").innerText = "";
   document.getElementById("sriError").innerText = "";
   document.getElementById("sriSnippet").classList.remove('is-active');
+  document.getElementById("sriCopyClipboard").classList.remove('is-active');
+  document.getElementById("sriCopyClipboardButton").disable = true;
+  document.getElementById("sriURLCopied").classList.remove('is-active', 'success', 'fail');
 }
 
 async function hashText(message) {
@@ -41,6 +44,7 @@ async function formSubmit(event) {
   const inputEl = document.getElementById("url");
   const url = inputEl.value;
   const resultDiv = document.getElementById("sriSnippet");
+  const copyDiv = document.getElementById("sriCopyClipboard");
   const errorDiv = document.getElementById("sriError");
 
   console.info("Trying", url);
@@ -61,6 +65,8 @@ async function formSubmit(event) {
 
       resultDiv.classList.add("is-active");
       resultDiv.innerHTML = scriptEl;
+      copyDiv.classList.add("is-active");
+      document.getElementById("sriCopyClipboardButton").disable = false;
     } else {
       console.error("Non-OK HTTP response status. Error.");
       errorDiv.innerHTML = getErrorText(url);
@@ -71,6 +77,45 @@ async function formSubmit(event) {
   }
 }
 
+function copyToClipboardSuccess() {
+  const statusElem = document.getElementById("sriURLCopied");
+
+  statusElem.innerText = "snippet copied!";
+  statusElem.classList.remove("fail");
+  statusElem.classList.add("is-active", "success");
+}
+
+function copyToClipboardFail(cause) {
+  const statusElem = document.getElementById("sriURLCopied");
+
+  if (!cause) {
+    cause = "unknown error";
+  }
+  const msg = `copy failed: ${cause}`;
+
+  console.error(msg);
+  statusElem.innerText = msg;
+  statusElem.classList.remove("success");
+  statusElem.classList.add("is-active", "fail");
+}
+
+async function copyToClipboard() {
+  const resultDiv = document.getElementById("sriSnippet");
+  const snippet = resultDiv.innerText;
+
+  if (!window.navigator.clipboard) {
+    copyToClipboardFail("could not access clipboard");
+    return;
+  }
+  try {
+    await window.navigator.clipboard.writeText(snippet);
+    return copyToClipboardSuccess();
+  } catch (e) {
+    return copyToClipboardFail();
+  }
+}
+
 addEventListener("DOMContentLoaded", () => {
   document.getElementById("sriForm").addEventListener("submit", formSubmit);
+  document.getElementById("sriCopyClipboardButton").addEventListener("click", copyToClipboard);
 });

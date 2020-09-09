@@ -117,7 +117,8 @@ footer {
   font-size: 1.5rem;
 }
 
-#sriApp input {
+#sriApp input,
+#sriApp button {
   font-size: 0.9rem;
   height: 2.25rem;
   display: inline-block;
@@ -131,7 +132,8 @@ footer {
   padding: 0 2%;
 }
 
-#sriApp input[type="submit"] {
+#sriApp input[type="submit"],
+#sriApp button {
   cursor: pointer;
   color: #fff;
   background-color: #007da6;
@@ -170,6 +172,34 @@ footer {
   font-size: 16pt;
   text-align: left;
   background-color: #ffb6c1;
+}
+
+#sriCopyClipboard,
+#sriURLCopied {
+  text-align: center;
+  display: none;
+}
+
+#sriCopyClipboard.is-active,
+#sriURLCopied.is-active {
+  display: revert;
+}
+
+#sriCopyClipboardButton {
+  display: block;
+}
+
+#sriURLCopied {
+  font-size: 16pt;
+  font-weight: 500;
+}
+
+#sriURLCopied.success {
+  color: darkgreen;
+}
+
+#sriURLCopied.fail {
+  color: darkred;
 }
 
 /*
